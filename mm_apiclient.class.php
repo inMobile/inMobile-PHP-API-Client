@@ -12,13 +12,14 @@ class SimpleXMLExtended extends SimpleXMLElement
 
 class MM_Connector
 {
-    private $mmFrameworkVersion = 'MM_PHP_client_2_0_3_4';
+    private $mmFrameworkVersion = 'MM_PHP_client_2_1_0_0';
 	private $xml;
 	private $error;
 	private $reply;
 	private $api_key;
 	private $server_address;
 	private $status_address;
+
 	public function __construct($api_key, $server_address, $status_address = null)
 	{
 		$this->api_key = $api_key;
@@ -57,18 +58,36 @@ class MM_Connector
 
     private function AppendStandardXmlElements(MM_Message $mm_message)
     {
-        $message_element = $this->data->addChild('message');
-
+		$message_element = $this->data->addChild('message');
+		
 		$message_element->addChild('sendername', $mm_message->getSendername());
 		$text = $message_element->addChild('text');
+
+		// Flash defaults to false, no need to specify it
+		if ($mm_message->getFlash() == true) {
+			$text->addAttribute('flash', 'true');
+		}
 
 		$text->addCData($mm_message->getMessage());
 
         // Send time is optional
-        if($mm_message->getSendTime() != ''){
+		if($mm_message->getSendTime() != '')
+		{
             $message_element->addChild('sendtime', $mm_message->getSendTime());
-        }
+		}
 
+		// Expire In Seconds is optional
+		if(is_null($mm_message->getExpireInSeconds()) == false)
+		{
+            $message_element->addChild('expireinseconds', $mm_message->getExpireInSeconds());
+		}
+
+		// Respect blacklist defaults to true, no need to specify it
+		if($mm_message->getRespectBlacklist() == false) 
+		{
+			$message_element->addChild('respectblacklist', 'false');
+		}
+       
 		foreach($mm_message->getRecipients() as $recipient)
 		{
 			$recipients = $message_element->addChild('recipients');
@@ -163,10 +182,15 @@ class MM_Connector
 
 class MM_Message
 {
-    private $send_time = '';
 	private $message = '';
 	private $sendername = '';
 	private $recipients = array();
+
+	// Optional fields
+	private $send_time = '';
+	private $flash = false;
+	private $expire_in_seconds = null;
+	private $respect_blacklist = true;
 
 	public function __construct($message, array $recipients, $sendername)
 	{
@@ -180,16 +204,6 @@ class MM_Message
 		return $this->message;
 	}
 
-    public function getSendTime()
-	{
-		return $this->send_time;
-	}
-
-    public function setSendTime($send_time)
-	{
-		$this->send_time = $send_time;
-	}
-
 	public function getRecipients()
 	{
 		return $this->recipients;
@@ -200,12 +214,52 @@ class MM_Message
 		return $this->sendername;
 	}
 
+	public function getSendTime()
+	{
+		return $this->send_time;
+	}
+
+    public function setSendTime($send_time)
+	{
+		$this->send_time = $send_time;
+	}
+
+	public function getRespectBlacklist() 
+	{
+		return $this->respect_blacklist;
+	}
+
+	public function setRespectBlacklist($respect_blacklist) 
+	{
+		$this->respect_blacklist = $respect_blacklist;
+	}
+
+	public function getFlash() 
+	{
+		return $this->flash;
+	}
+
+	public function setFlash($flash) 
+	{
+		$this->flash = $flash;
+	}
+
+	public function getExpireInSeconds() 
+	{
+		return $this->expire_in_seconds;
+	}
+
+	public function setExpireInSeconds($expire_in_seconds) 
+	{
+		$this->expire_in_seconds = $expire_in_seconds;
+	}
 }
 
 class MM_Refund_Message
 {
 	private $message = '';
 	private $message_id_to_refund = '';
+
 	public function __construct($message, $message_id_to_refund)
 	{
 		$this->message = $message;
@@ -230,6 +284,7 @@ class MM_Premium_Message extends MM_Message
 	private $country_code = '';
 	private $shortcode = '';
 	private $invoice_description = '';
+
 	public function __construct($message, array $recipients, $sendername, $price, $type, $country_code, $shortcode, $invoice_description)
 	{
 		parent::__construct($message, $recipients, $sendername);

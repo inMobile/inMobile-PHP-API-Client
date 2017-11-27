@@ -22,6 +22,15 @@ $msg = new MM_Message(
 // Optionally a send time can be specified
 // $msg->setSendTime('2020-01-20 18:30:00');
 
+// Optionally flash can be specified
+// $msg->setFlash(true);
+
+// Optionally an expire time in seconds can be specified
+// $msg->setExpireInSeconds(60);
+
+// Optionally respect blacklist can be specified
+// $msg->setRespectBlacklist(false);
+
 $MM_Connector->addMessage($msg);
 
 /* Send the payload */
