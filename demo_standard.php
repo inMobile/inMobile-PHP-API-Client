@@ -25,6 +25,9 @@ $msg = new MM_Message(
 // Optionally flash can be specified
 // $msg->setFlash(true);
 
+// To allow for more characters, set encoding to unicde. NOTE: each character takes up the double space, hence messages are split at half the length, potentially resulting in more expensive messages.
+// $msg->setEncoding('unicode');
+
 // Optionally an expire time in seconds can be specified
 // $msg->setExpireInSeconds(60);
 
