@@ -12,7 +12,7 @@ class SimpleXMLExtended extends SimpleXMLElement
 
 class MM_Connector
 {
-    private $mmFrameworkVersion = 'MM_PHP_client_2_1_0_0';
+    private $mmFrameworkVersion = 'MM_PHP_client_2_1_1_0';
 	private $xml;
 	private $error;
 	private $reply;
@@ -67,7 +67,8 @@ class MM_Connector
 		if ($mm_message->getFlash() == true) {
 			$text->addAttribute('flash', 'true');
 		}
-
+		$text->addAttribute('encoding', $mm_message->getEncoding());
+		
 		$text->addCData($mm_message->getMessage());
 
         // Send time is optional
@@ -189,6 +190,7 @@ class MM_Message
 	// Optional fields
 	private $send_time = '';
 	private $flash = false;
+	private $encoding = '';
 	private $expire_in_seconds = null;
 	private $respect_blacklist = true;
 
@@ -242,6 +244,16 @@ class MM_Message
 	public function setFlash($flash) 
 	{
 		$this->flash = $flash;
+	}
+
+	public function getEncoding() 
+	{
+		return $this->encoding;
+	}
+
+	public function setEncoding($encoding) 
+	{
+		$this->encoding = $encoding;
 	}
 
 	public function getExpireInSeconds() 
