@@ -12,7 +12,7 @@ class SimpleXMLExtended extends SimpleXMLElement
 
 class MM_Connector
 {
-    private $mmFrameworkVersion = 'MM_PHP_client_2_1_1_0';
+	private $mmFrameworkVersion = 'MM_PHP_client_2_1_2_0';
 	private $xml;
 	private $error;
 	private $reply;
@@ -24,14 +24,14 @@ class MM_Connector
 	{
 		$this->api_key = $api_key;
 		$this->server_address = $server_address;
-        $this->status_address = $status_address;
+		$this->status_address = $status_address;
 		
 		$this->resetXmlElement();
 	}
 
 	private function resetXmlElement(){
 		$this->xml = new SimpleXMLExtended('<?xml version="1.0" encoding="UTF-8"?><request/>');
-        $this->xml->addAttribute('source', $this->mmFrameworkVersion);
+		$this->xml->addAttribute('source', $this->mmFrameworkVersion);
 		$authentication = $this->xml->addChild('authentication');
 		$authentication->addAttribute('apikey', $this->api_key);
 		$this->data = $this->xml->addChild('data');
@@ -50,37 +50,38 @@ class MM_Connector
 	
 	public function addMessage(MM_Message $mm_message)
 	{
-        $message_element = $this->AppendStandardXmlElements($mm_message);
-        if($mm_message instanceof MM_Premium_Message){
-            $this->AppendOverchargedXmlElements($message_element, $mm_message);
-        }
+		$message_element = $this->AppendStandardXmlElements($mm_message);
+		if($mm_message instanceof MM_Premium_Message){
+			$this->AppendOverchargedXmlElements($message_element, $mm_message);
+		}
 	}
 
-    private function AppendStandardXmlElements(MM_Message $mm_message)
-    {
+	private function AppendStandardXmlElements(MM_Message $mm_message)
+	{
 		$message_element = $this->data->addChild('message');
 		
-		$message_element->addChild('sendername', $mm_message->getSendername());
+		$sendername = $message_element->addChild('sendername');
+		$sendername->addCData($mm_message->getSendername());
+
 		$text = $message_element->addChild('text');
+		$text->addCData($mm_message->getMessage());
 
 		// Flash defaults to false, no need to specify it
 		if ($mm_message->getFlash() == true) {
 			$text->addAttribute('flash', 'true');
 		}
 		$text->addAttribute('encoding', $mm_message->getEncoding());
-		
-		$text->addCData($mm_message->getMessage());
 
-        // Send time is optional
+		// Send time is optional
 		if($mm_message->getSendTime() != '')
 		{
-            $message_element->addChild('sendtime', $mm_message->getSendTime());
+			$message_element->addChild('sendtime', $mm_message->getSendTime());
 		}
 
 		// Expire In Seconds is optional
 		if(is_null($mm_message->getExpireInSeconds()) == false)
 		{
-            $message_element->addChild('expireinseconds', $mm_message->getExpireInSeconds());
+			$message_element->addChild('expireinseconds', $mm_message->getExpireInSeconds());
 		}
 
 		// Respect blacklist defaults to true, no need to specify it
@@ -88,26 +89,26 @@ class MM_Connector
 		{
 			$message_element->addChild('respectblacklist', 'false');
 		}
-       
+
 		foreach($mm_message->getRecipients() as $recipient)
 		{
 			$recipients = $message_element->addChild('recipients');
 			$recipients->addChild('msisdn', $recipient);
 		}
 
-        return $message_element;
-    }
+		return $message_element;
+	}
 
-    private function AppendOverchargedXmlElements($message_element, MM_Premium_Message $mm_oc_message)
-    {
-        $overcharge = $message_element->addChild('overchargeinfo');
+	private function AppendOverchargedXmlElements($message_element, MM_Premium_Message $mm_oc_message)
+	{
+		$overcharge = $message_element->addChild('overchargeinfo');
 
 		$overcharge->addAttribute('price', $mm_oc_message->getPrice());
 		$overcharge->addAttribute('type', $mm_oc_message->getType());
 		$overcharge->addAttribute('countrycode', $mm_oc_message->getCountryCode());
 		$overcharge->addAttribute('shortcode', $mm_oc_message->getShortcode());
 		$overcharge->addAttribute('invoicedescription', $mm_oc_message->getInvoiceDescription());
-    }
+	}
 
 	public function send()
 	{
@@ -221,7 +222,7 @@ class MM_Message
 		return $this->send_time;
 	}
 
-    public function setSendTime($send_time)
+	public function setSendTime($send_time)
 	{
 		$this->send_time = $send_time;
 	}
