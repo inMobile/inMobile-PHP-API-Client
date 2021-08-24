@@ -2,7 +2,7 @@
 
 namespace MarkVesterskov\InMobile;
 
-class SimpleXMLExtended extends \SimpleXMLExtended
+class SimpleXMLExtended extends \SimpleXMLElement
 {
     public function addCData($cdata_text)
     {
