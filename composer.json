@@ -1,0 +1,20 @@
+{
+  "name": "markvesterskov/inmobile-php-client",
+  "description": "API for interacting with inMobiles APIs",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "MarkVesterskov\\InMobile\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.0|^8.0"
+  },
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Mark Vesterskov",
+      "email": "mark@48k.dk"
+    }
+  ]
+}
