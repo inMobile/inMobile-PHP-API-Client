@@ -1,0 +1,33 @@
+{
+    "name": "inmobile/inmobile-sdk",
+    "description": "A PHP libary for interaction with the InMobile API",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Kristoffer Vestergaard",
+            "email": "kristoffer@modified.dk"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Inmobile\\InmobileSDK\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Inmobile\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "mockery/mockery": "^1.4",
+        "dms/phpunit-arraysubset-asserts": "^0.3.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
