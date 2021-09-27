@@ -17,11 +17,6 @@ class ListsApi
         $this->api = $api;
     }
 
-    public function get(int $limit = 20): Response
-    {
-        return $this->api->get('/lists', ['pageLimit' => $limit]);
-    }
-
     public function getAll(): array
     {
         return $this->fetchAllFrom('/lists');

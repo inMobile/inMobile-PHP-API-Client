@@ -74,7 +74,7 @@ class InmobileApiTest extends MockeryTestCase
         $api = new InmobileApi('example-token', $client);
 
         $client->shouldReceive('request')
-            ->with('DELETE', '/example-url', ['key' => 'value'])
+            ->with('DELETE', '/example-url?key=value', null)
             ->andReturn(['[]', 200])
             ->once();
 

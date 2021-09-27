@@ -2,10 +2,12 @@
 
 namespace Inmobile\InmobileSDK\Endpoints;
 
+use DateTime;
 use Inmobile\InmobileSDK\InmobileApi;
 use Inmobile\InmobileSDK\RequestModels\Recipient;
 use Inmobile\InmobileSDK\Response;
 use Inmobile\InmobileSDK\Traits\HasPagination;
+use stdClass;
 
 class RecipientsApi
 {
@@ -18,34 +20,26 @@ class RecipientsApi
         $this->api = $api;
     }
 
-    public function get(string $listId, int $limit = 20): Response
-    {
-        return $this->api->get('/lists/' . $listId . '/recipients', ['pageLimit' => $limit]);
-    }
-
     public function getAll(string $listId): array
     {
         return $this->fetchAllFrom('/lists/' . $listId . '/recipients');
     }
 
-    public function findById(string $listId, string $id): Response
+    public function findById(string $listId, string $id): Recipient
     {
-        return $this->api->get('/lists/' . $listId . '/recipients/' . $id);
+        $response = $this->api->get('/lists/' . $listId . '/recipients/' . $id);
+
+        return $this->convertToRecipient($response->toObject());
     }
 
-    /**
-     * @param string     $listId
-     * @param string|int $countryCode
-     * @param string|int $phoneNumber
-     *
-     * @return \Inmobile\InmobileSDK\Response
-     */
-    public function findByPhoneNumber(string $listId, $countryCode, $phoneNumber): Response
+    public function findByPhoneNumber(string $listId, $countryCode, $phoneNumber): Recipient
     {
-        return $this->api->get('/lists/' . $listId . '/recipients/ByNumber', [
+        $response = $this->api->get('/lists/' . $listId . '/recipients/ByNumber', [
             'countryCode' => (string) $countryCode,
             'phoneNumber' => (string) $phoneNumber,
         ]);
+
+        return $this->convertToRecipient($response->toObject());
     }
 
     public function create(string $listId, Recipient $recipient): Response
@@ -81,5 +75,14 @@ class RecipientsApi
     public function deleteAllFromList(string $listId): Response
     {
         return $this->api->delete('/lists/' . $listId . '/recipients/all');
+    }
+
+    protected function convertToRecipient(stdClass $response): Recipient
+    {
+        $recipient = Recipient::create($response->numberInfo->countryCode, $response->numberInfo->phoneNumber)
+            ->createdAt(new DateTime($response->created))
+            ->setFields((array) $response->fields);
+
+        return $recipient;
     }
 }

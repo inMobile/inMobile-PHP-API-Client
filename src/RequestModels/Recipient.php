@@ -63,7 +63,7 @@ class Recipient
                 'countryCode' => (string) $this->countryCode,
                 'phoneNumber' => (string) $this->phoneNumber,
             ],
-            'fields' => $this->fields,
+            'fields' => (object) $this->fields,
         ];
 
         if (isset($this->createdAt)) {
@@ -94,6 +94,13 @@ class Recipient
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function setFields(array $fields): Recipient
+    {
+        $this->fields = $fields;
+
+        return $this;
     }
 
     public function getCreatedAt(): ?DateTime

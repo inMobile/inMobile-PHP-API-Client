@@ -59,7 +59,7 @@ class InmobileApi
 
     protected function request($method, $url, ?array $payload = null)
     {
-        if ($method === 'GET') {
+        if ($method === 'GET' || $method === 'DELETE') {
             if ($payload && count($payload) > 0) {
                 $url .= '?' . http_build_query($payload);
             }

@@ -38,11 +38,24 @@ class RecipientTest extends TestCase
                 'countryCode' => '45',
                 'phoneNumber' => '12345678'
             ],
-            'fields' => [
+            'fields' => (object) [
                 'firstname' => 'John',
                 'lastname' => 'Doe',
             ],
             'externalCreated' => '2021-01-02T03:04:05Z'
+        ], $recipient->toArray());
+    }
+
+    public function test_converts_empty_fields_array_to_object()
+    {
+        $recipient = Recipient::create(45, 12345678);
+
+        $this->assertEquals([
+            'numberInfo' => [
+                'countryCode' => '45',
+                'phoneNumber' => '12345678'
+            ],
+            'fields' => new \stdClass(),
         ], $recipient->toArray());
     }
 }

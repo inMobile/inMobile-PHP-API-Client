@@ -35,24 +35,6 @@ class BlacklistApiTest extends MockeryTestCase
         JSON;
     }
 
-    public function test_get_blacklist()
-    {
-        $api = Mockery::mock(InmobileApi::class);
-        $blacklistsApi = new BlacklistApi($api);
-
-        $api->shouldReceive('get')
-            ->with(
-                '/blacklist',
-                ['pageLimit' => 13]
-            )
-            ->andReturn(new Response('[]', 200))
-            ->once();
-
-        $response = $blacklistsApi->get(13);
-
-        $this->assertInstanceOf(Response::class, $response);
-    }
-
     public function test_get_all_from_blacklist()
     {
         $api = Mockery::mock(InmobileApi::class);

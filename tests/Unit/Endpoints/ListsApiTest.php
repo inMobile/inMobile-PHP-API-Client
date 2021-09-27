@@ -99,24 +99,6 @@ class ListsApiTest extends MockeryTestCase
         $this->assertInstanceOf(Response::class, $response);
     }
 
-    public function test_get_lists()
-    {
-        $api = Mockery::mock(InmobileApi::class);
-        $listsApi = new ListsApi($api);
-
-        $api->shouldReceive('get')
-            ->with(
-                '/lists',
-                ['pageLimit' => 13],
-            )
-            ->andReturn(new Response('[]', 200))
-            ->once();
-
-        $response = $listsApi->get(13);
-
-        $this->assertInstanceOf(Response::class, $response);
-    }
-
     public function test_get_all_from_lists()
     {
         $api = Mockery::mock(InmobileApi::class);
