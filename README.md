@@ -44,7 +44,7 @@ $response->toArray();
  */
 ```
 
-You can find the full API documentation here: https://api.inmobile.com/docs/index.html?url=/swagger/v1/swagger.json#section/Introduction
+You can find the full API documentation here: https://api.inmobile.com/docs/
 
 ## Endpoints
 
