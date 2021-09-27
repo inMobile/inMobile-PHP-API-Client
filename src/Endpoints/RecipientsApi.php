@@ -42,9 +42,11 @@ class RecipientsApi
         return $this->convertToRecipient($response->toObject());
     }
 
-    public function create(string $listId, Recipient $recipient): Response
+    public function create(string $listId, Recipient $recipient): Recipient
     {
-        return $this->api->post('/lists/' . $listId . '/recipients', $recipient->toArray());
+        $response = $this->api->post('/lists/' . $listId . '/recipients', $recipient->toArray());
+        
+        return $this->convertToRecipient($response->toObject());
     }
 
     public function update(string $listId, string $id, Recipient $recipient): Response
@@ -81,7 +83,9 @@ class RecipientsApi
     {
         $recipient = Recipient::create($response->numberInfo->countryCode, $response->numberInfo->phoneNumber)
             ->createdAt(new DateTime($response->created))
-            ->setFields((array) $response->fields);
+            ->setFields((array) $response->fields)
+            ->setId($response->id)
+            ->setListId($response->listId);
 
         return $recipient;
     }

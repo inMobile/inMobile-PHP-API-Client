@@ -39,8 +39,10 @@ class CurlClient
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         }
 
+        $inmobileClientVersion = 'Inmobile PHP Client v1.0.0.0';
         curl_setopt($curl, CURLOPT_USERPWD, ':' . $this->apiKey);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json','X-InmobileClientVersion:'.$inmobileClientVersion]);
+		curl_setopt($curl, CURLOPT_USERAGENT, $inmobileClientVersion );
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);

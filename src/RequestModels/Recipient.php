@@ -16,6 +16,8 @@ class Recipient
      * @var string|int
      */
     protected $phoneNumber;
+    protected $id;
+    protected $listId;
 
     protected array $fields = [];
     protected ?DateTime $createdAt;
@@ -83,12 +85,26 @@ class Recipient
         return $this->countryCode;
     }
 
+    public function setCountryCode(string $countryCode): Recipient
+    {
+        $this->countryCode = $countryCode; 
+
+        return $this;
+    }
+
     /**
      * @return int|string
      */
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): Recipient
+    {
+        $this->phoneNumber = $phoneNumber; 
+        
+        return $this;
     }
 
     public function getFields(): array
@@ -106,5 +122,29 @@ class Recipient
     public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function setId(string $id): Recipient
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getListId(): string
+    {
+        return $this->listId;
+    }
+
+    public function setListId(string $listId): Recipient
+    {
+        $this->listId = $listId;
+
+        return $this;
     }
 }
