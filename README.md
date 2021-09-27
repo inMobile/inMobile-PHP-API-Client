@@ -1,5 +1,9 @@
 # Inmobile PHP SDK for v4
 
+## Requirements
+- PHP 7.4 or 8.0. 
+- composer
+
 ## Getting started
 1. `composer require inmobile/inmobile-sdk`
 2. Initialize the `InmobileApi` class and start sending messages!
