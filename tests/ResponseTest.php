@@ -27,7 +27,7 @@ class ResponseTest extends TestCase
 
         $this->assertIsObject($data);
         $this->assertIsArray($data->result);
-        $this->assertCount(22, $data->result);
+        $this->assertCount(2, $data->result);
         $this->assertEquals(1, $data->result[0]->id);
     }
 
