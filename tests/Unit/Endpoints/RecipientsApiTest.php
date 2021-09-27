@@ -161,12 +161,12 @@ class RecipientsApiTest extends MockeryTestCase
                 '/lists/foobar/recipients',
                 $recipient->toArray(),
             )
-            ->andReturn(new Response('[]', 200))
+            ->andReturn(new Response($this->validRecipientResponse(), 200))
             ->once();
 
         $response = $recipientsApi->create('foobar', $recipient);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(Recipient::class, $response);
     }
 
     public function test_update_recipient()
