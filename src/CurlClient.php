@@ -1,4 +1,5 @@
 <?php
+
 namespace Inmobile\InmobileSDK;
 
 class CurlClient
