@@ -15,7 +15,8 @@ So the **messages** API would be accessed by calling `->messages()`, **lists** A
 
 ```php
 /*
- * Require autoload, to automatically load the SDK, after installing via composer
+ * Require autoload, to automatically load the SDK, after installing via composer.
+ * Execute the following command now, if you haven't already: composer require inmobile/inmobile-sdk
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
