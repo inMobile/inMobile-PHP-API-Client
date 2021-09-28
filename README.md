@@ -23,8 +23,8 @@ $api = new InmobileApi('my-api-token');
 
 $response = $api->messages()->send(
     Message::create('This is a message text to be sent')
-        ->from('INMBL')
-        ->to(4512345678)
+        ->from('1245')
+        ->to('4512345678')
 );
 
 $response->toArray();
@@ -40,7 +40,7 @@ $response->toArray();
  *             "isAnonymized": false
  *         },
  *         "text": "This is a message text to be sent",
- *         "from": "INMBL",
+ *         "from": "1245",
  *         "smsCount": 1,
  *         "messageId": "INMBL",
  *         "encoding": "gsm7"
