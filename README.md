@@ -14,6 +14,8 @@ So the **messages** API would be accessed by calling `->messages()`, **lists** A
 **Example:**
 
 ```php
+require_once __DIR__ . '/vendor/autoload.php';
+
 use Inmobile\InmobileSDK\InmobileApi;
 use Inmobile\InmobileSDK\RequestModels\Message;
 
