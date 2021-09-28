@@ -14,13 +14,22 @@ So the **messages** API would be accessed by calling `->messages()`, **lists** A
 **Example:**
 
 ```php
+/*
+ * Require autoload, to automatically load the SDK, after installing via composer
+ */
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Inmobile\InmobileSDK\InmobileApi;
 use Inmobile\InmobileSDK\RequestModels\Message;
 
+/*
+ * Initialize the Inmobile API Client
+ */
 $api = new InmobileApi('my-api-token');
 
+/*
+ * Send the message
+ */
 $response = $api->messages()->send(
     Message::create('This is a message text to be sent')
         ->from('1245')
