@@ -2,7 +2,6 @@
 
 ## Requirements
 - PHP 7.4 or 8.0. 
-- composer
 
 ## Getting started
 1. `composer require inmobile/inmobile-sdk`
