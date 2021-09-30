@@ -4,6 +4,7 @@
 - PHP 7.4 or 8.0. 
 
 ## Getting started
+The latest version of the client can be found on packagist [here](https://packagist.org/packages/inmobile/inmobile-sdk)
 1. `composer require inmobile/inmobile-sdk`
 2. Initialize the `InmobileApi` class and start sending messages!
 
