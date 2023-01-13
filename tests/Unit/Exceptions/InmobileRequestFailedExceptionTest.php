@@ -35,4 +35,13 @@ class InmobileRequestFailedExceptionTest extends TestCase
 
         $this->assertInstanceOf(InmobileRequestFailedException::class, $exception);
     }
+
+    public function test_handles_empty_response_bodies()
+    {
+        $response = new Response('', 500);
+        $exception = InmobileRequestFailedException::fromResponse($response);
+
+        $this->assertInstanceOf(InmobileRequestFailedException::class, $exception);
+        $this->assertEquals('The request failed with an empty response and status code: 500', $exception->getMessage());
+    }
 }
