@@ -11,9 +11,13 @@ class InmobileRequestFailedException extends Exception
 
     public function __construct(Response $response, ?string $message = null)
     {
-        parent::__construct(
-            $message ?: ('The request failed with the following response: ' . $response->toObject()->errorMessage)
-        );
+        if ($response->toObject() && property_exists($response->toObject(), 'errorMessage')) {
+            $message = 'The request failed with the following response: ' . $response->toObject()->errorMessage;
+        } elseif (!$message) {
+            $message = 'The request failed with an empty response and status code: ' . $response->getStatus();
+        }
+
+        parent::__construct($message);
 
         $this->response = $response;
     }
