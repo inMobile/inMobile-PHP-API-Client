@@ -2,6 +2,8 @@
 
 namespace Inmobile\InmobileSDK;
 
+use Inmobile\InmobileSDK\Exceptions\CurlException;
+
 class CurlClient
 {
     protected ?string $baseUri = null;
@@ -42,12 +44,14 @@ class CurlClient
         $inmobileClientVersion = 'Inmobile PHP Client v4.0.0.70';
         curl_setopt($curl, CURLOPT_USERPWD, ':' . $this->apiKey);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json','X-InmobileClientVersion:'.$inmobileClientVersion]);
-		curl_setopt($curl, CURLOPT_USERAGENT, $inmobileClientVersion );
+        curl_setopt($curl, CURLOPT_USERAGENT, $inmobileClientVersion);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
 
-        $response = curl_exec($curl);
+        if (!$response = curl_exec($curl)) {
+            throw new CurlException(curl_errno($curl), curl_error($curl));
+        }
 
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
