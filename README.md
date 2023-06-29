@@ -1,7 +1,7 @@
 # Inmobile PHP SDK for v4
 
 ## Requirements
-- PHP 7.4 or 8.x. 
+- PHP 7.4, 8.0, 8.1 or 8.2. 
 
 ## Getting started
 The latest version of the client can be found on packagist [here](https://packagist.org/packages/inmobile/inmobile-sdk)
@@ -86,7 +86,33 @@ $api->messages()->send([
     Message::create('Barbiz')
         ->from('INMBL')
         ->to(4512345678)
+        ->countryHint('DK')
 ]);
+```
+
+#### Send a message using a template
+
+```php
+$api->messages()->sendUsingTemplate(
+    TemplateMessage::create()
+        ->to(4512345678)
+        ->setPlaceholders([
+            '{name}' => 'John',
+            '{lastname}' => 'Doe',
+        ]),
+    'ecdcb257-c1e9-4b44-8a4e-f05822372d82',
+);
+
+// Multiple
+$placeholders = [
+    '{name}' => 'John',
+    '{lastname}' => 'Doe',
+];
+
+$api->messages()->sendUsingTemplate([
+    TemplateMessage::create()->to(4512345678)->setPlaceholders($placeholders),
+    TemplateMessage::create()->to(4512345678)->setPlaceholders($placeholders),
+], 'ecdcb257-c1e9-4b44-8a4e-f05822372d82');
 ```
 
 #### Send message using query
@@ -119,13 +145,6 @@ $api->messages()->cancel(['MESSAGEID-1', 'MESSAGEID-2'])
 
 ### Lists
 This can be accessed by calling `->lists()` on `InmobileApi`. Below you will find an example of all the actions.
-
-#### Get
-Fetch a paginated list of all lists.
-
-```php
-$api->lists()->get($pageLimit = 20)
-```
 
 #### Get all
 Fetch all lists. This automatically runs through every page and returns an array of all lists.
@@ -291,4 +310,42 @@ This deletes all recipients on the given list
 
 ```php
 $api->recipients()->deleteAllFromList($listId = 'LIST-1')
+```
+
+### GDPR
+
+#### Create information deletion request
+
+```php
+$api->gdpr()->createDeletionRequest(NumberInfo::create($countryCode = '45', $phoneNumber = '12345678'))
+```
+
+### Tools
+
+#### Parse phone numbers
+
+```php
+$api->tools()->numbersToParse([
+    NumberToParse::create($countryHint = 'DK', $rawMsisdn = '12 34 56 78')
+    NumberToParse::create($countryHint = '45', $rawMsisdn = '12 34 56 78')
+])
+
+// If you wish to parse a single number, you can do so by passing a single NumberToParse object
+$api->tools()->numbersToParse(NumberToParse::create($countryHint = 'DK', $rawMsisdn = '12 34 56 78'))
+```
+
+### Templates
+
+#### Get all
+Fetch all templates. This automatically runs through every page and returns an array of all templates.
+
+```php
+$api->templates()->getAll()
+```
+
+#### Find
+Find a template by its ID
+
+```php
+$api->templates()->find($templateId)
 ```

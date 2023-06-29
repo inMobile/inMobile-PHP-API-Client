@@ -3,66 +3,56 @@
 namespace Inmobile\Tests\Unit\RequestModels;
 
 use DateTime;
-use Inmobile\InmobileSDK\RequestModels\Message;
+use Inmobile\InmobileSDK\RequestModels\TemplateMessage;
 use PHPUnit\Framework\TestCase;
 
-class MessageTest extends TestCase
+class TemplateMessageTest extends TestCase
 {
     public function test_create_a_message()
     {
         $date = new DateTime('2021-01-02 03:04:05');
-        $message = Message::create('Hello World')
+        $message = TemplateMessage::create()
             ->to(4512345678)
-            ->from('INMBL')
-            ->setMessageId('SMS-1')
             ->setCountryHint('DK')
+            ->setMessageId('SMS-1')
             ->expireIn(60)
             ->sendAt($date)
-            ->flash()
             ->ignoreBlacklist()
-            ->setEncoding(Message::ENCODING_GSM7)
-            ->setStatusCallbackUrl('https://example.com/callback');
+            ->setStatusCallbackUrl('https://example.com/callback')
+            ->setPlaceholders(['name' => 'John', '{lastname}' => 'Doe']);
 
-        $this->assertEquals('Hello World', $message->getText());
         $this->assertEquals(4512345678, $message->getRecipient());
         $this->assertEquals(60, $message->getExpireInSeconds());
-        $this->assertEquals('INMBL', $message->getSender());
         $this->assertEquals('SMS-1', $message->getMessageId());
         $this->assertEquals('DK', $message->getCountryHint());
         $this->assertEquals($date, $message->getSendTime());
-        $this->assertTrue($message->getFlash());
         $this->assertFalse($message->getRespectBlacklist());
-        $this->assertEquals(Message::ENCODING_GSM7, $message->getEncoding());
         $this->assertEquals('https://example.com/callback', $message->getStatusCallbackUrl());
+        $this->assertEquals(['{name}' => 'John', '{lastname}' => 'Doe'], $message->getPlaceholders());
     }
 
     public function test_convert_to_array()
     {
         $date = new DateTime('2021-01-02 03:04:05');
-        $message = Message::create('Hello World')
+        $message = TemplateMessage::create()
             ->to(4512345678)
-            ->from('INMBL')
             ->setCountryHint('DK')
             ->setMessageId('SMS-1')
             ->expireIn(60)
             ->sendAt($date)
-            ->flash()
             ->ignoreBlacklist()
-            ->setEncoding(Message::ENCODING_GSM7)
-            ->setStatusCallbackUrl('https://example.com/callback');
+            ->setStatusCallbackUrl('https://example.com/callback')
+            ->setPlaceholders(['name' => 'John', 'lastname' => 'Doe']);
 
         $this->assertEquals([
             'to' => '4512345678',
-            'text' => 'Hello World',
-            'from' => 'INMBL',
             'countryHint' => 'DK',
             'messageId' => 'SMS-1',
             'sendTime' => '2021-01-02T03:04:05Z',
             'validityPeriodInSeconds' => 60,
-            'flash' => true,
             'respectBlacklist' => false,
             'statusCallbackUrl' => 'https://example.com/callback',
-            'encoding' => Message::ENCODING_GSM7,
+            'placeholders' => ['{name}' => 'John', '{lastname}' => 'Doe'],
         ], $message->toArray());
     }
 }

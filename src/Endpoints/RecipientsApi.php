@@ -45,7 +45,7 @@ class RecipientsApi
     public function create(string $listId, Recipient $recipient): Recipient
     {
         $response = $this->api->post('/lists/' . $listId . '/recipients', $recipient->toArray());
-        
+
         return $this->convertToRecipient($response->toObject());
     }
 

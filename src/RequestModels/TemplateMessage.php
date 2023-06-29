@@ -5,43 +5,24 @@ namespace Inmobile\InmobileSDK\RequestModels;
 use DateTime;
 use DateTimeZone;
 
-class Message
+class TemplateMessage
 {
-    public const ENCODING_AUTO = 'auto';
-    public const ENCODING_GSM7 = 'gsm7';
-    public const ENCODING_UCS2 = 'ucs2';
-
-    protected string $text;
-    protected string $sender;
     protected ?DateTime $sendTime = null;
     protected ?int $expireInSeconds = null;
-    protected bool $flash = false;
     protected bool $respectBlacklist = true;
     protected ?string $statusCallbackUrl = null;
-    protected string $encoding = self::ENCODING_GSM7;
     protected ?string $messageId = null;
     protected ?string $countryHint = null;
+    protected array $placeholders = [];
 
     /**
      * @var mixed
      */
     protected $recipient;
 
-    public function __construct(string $text)
+    public static function create(): self
     {
-        $this->text = $text;
-    }
-
-    public static function create(string $contents): self
-    {
-        return new self($contents);
-    }
-
-    public function from(string $sender): self
-    {
-        $this->sender = $sender;
-
-        return $this;
+        return new self();
     }
 
     public function to($recipient): self
@@ -72,13 +53,6 @@ class Message
         return $this;
     }
 
-    public function flash(bool $shouldFlash = true): self
-    {
-        $this->flash = $shouldFlash;
-
-        return $this;
-    }
-
     public function ignoreBlacklist(bool $shouldIgnore = false): self
     {
         $this->respectBlacklist = $shouldIgnore;
@@ -93,16 +67,25 @@ class Message
         return $this;
     }
 
-    public function setEncoding(string $encoding): self
+    public function setCountryHint(string $countryHint): self
     {
-        $this->encoding = $encoding;
+        $this->countryHint = $countryHint;
 
         return $this;
     }
 
-    public function setCountryHint(string $countryHint): self
+    public function setPlaceholders(array $placeholders): self
     {
-        $this->countryHint = $countryHint;
+        foreach ($placeholders as $key => $value) {
+            if (strpos($key, '{') === 0 && strpos($key, '}') === strlen($key) - 1) {
+                continue;
+            }
+
+            $placeholders[sprintf('{%s}', $key)] = $value;
+            unset($placeholders[$key]);
+        }
+
+        $this->placeholders = $placeholders;
 
         return $this;
     }
@@ -112,28 +95,15 @@ class Message
         return [
             'to' => (string) $this->recipient,
             'countryHint' => $this->countryHint,
-            'text' => $this->text,
-            'from' => $this->sender,
             'messageId' => $this->messageId,
             'sendTime' => $this->sendTime
                 ? $this->sendTime->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')
                 : '',
             'validityPeriodInSeconds' => $this->expireInSeconds,
-            'flash' => $this->flash,
             'respectBlacklist' => $this->respectBlacklist,
             'statusCallbackUrl' => $this->statusCallbackUrl,
-            'encoding' => $this->encoding,
+            'placeholders' => $this->placeholders,
         ];
-    }
-
-    public function getText(): string
-    {
-        return $this->text;
-    }
-
-    public function getSender(): string
-    {
-        return $this->sender;
     }
 
     public function getSendTime(): ?DateTime
@@ -151,11 +121,6 @@ class Message
         return $this->recipient;
     }
 
-    public function getFlash(): bool
-    {
-        return $this->flash;
-    }
-
     public function getRespectBlacklist(): bool
     {
         return $this->respectBlacklist;
@@ -166,11 +131,6 @@ class Message
         return $this->statusCallbackUrl;
     }
 
-    public function getEncoding(): string
-    {
-        return $this->encoding;
-    }
-
     public function getMessageId(): ?string
     {
         return $this->messageId;
@@ -179,5 +139,10 @@ class Message
     public function getCountryHint(): ?string
     {
         return $this->countryHint;
+    }
+
+    public function getPlaceholders(): array
+    {
+        return $this->placeholders;
     }
 }

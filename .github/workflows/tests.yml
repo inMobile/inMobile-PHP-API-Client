@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: ['7.4', '8.0', '8.1', '8.2']
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+          extensions: mysql
+          tools: composer:v2, phpunit:v9
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: PHPUnit Tests
+        run: phpunit --coverage-text

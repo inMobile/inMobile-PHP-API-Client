@@ -7,6 +7,7 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Inmobile\InmobileSDK\Endpoints\MessagesApi;
 use Inmobile\InmobileSDK\InmobileApi;
 use Inmobile\InmobileSDK\RequestModels\Message;
+use Inmobile\InmobileSDK\RequestModels\TemplateMessage;
 use Inmobile\InmobileSDK\Response;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -28,6 +29,7 @@ class MessagesApiTest extends MockeryTestCase
                 "isValidMsisdn": true,
                 "isAnonymized": false
               },
+              "countryHint": "DK",
               "text": "Hello World!",
               "from": "INMBL",
               "smsCount": 1,
@@ -47,7 +49,8 @@ class MessagesApiTest extends MockeryTestCase
         $sendAt = new DateTime('tomorrow');
         $message = Message::create('Hello World!')
             ->from('INMBL')
-            ->to(4512345678)
+            ->to(12345678)
+            ->setCountryHint('DK')
             ->sendAt($sendAt);
 
         $api->shouldReceive('post')
@@ -67,6 +70,37 @@ class MessagesApiTest extends MockeryTestCase
         $messagesApi->send($message);
     }
 
+    public function test_sends_a_message_with_a_template_id()
+    {
+        $api = Mockery::mock(InmobileApi::class);
+        $messagesApi = new MessagesApi($api);
+
+        $sendAt = new DateTime('tomorrow');
+        $message = TemplateMessage::create()
+            ->to(12345678)
+            ->setCountryHint('DK')
+            ->setPlaceholders(['name' => 'John', 'lastname' => 'Doe'])
+            ->sendAt($sendAt);
+
+        $api->shouldReceive('post')
+            ->with(
+                '/sms/outgoing/sendusingtemplate',
+                Mockery::on(function ($payload) use ($message) {
+                    $this->assertIsArray($payload);
+
+                    $this->assertEquals('ecdcb257-c1e9-4b44-8a4e-f05822372d82', $payload['templateId']);
+                    $this->assertEquals($message->toArray(), $payload['messages'][0]);
+
+                    return true;
+                })
+            )
+            ->andReturn(new Response('[]', 200))
+            ->once();
+
+        $messagesApi->sendUsingTemplate($message, 'ecdcb257-c1e9-4b44-8a4e-f05822372d82');
+
+    }
+
     public function test_sends_a_single_message_with_all_possible_fields()
     {
         $api = Mockery::mock(InmobileApi::class);
@@ -76,6 +110,7 @@ class MessagesApiTest extends MockeryTestCase
         $message = Message::create('Hello World!')
             ->from('INMBL')
             ->to(4512345678)
+            ->setCountryHint('DK')
             ->expireIn(60)
             ->flash()
             ->ignoreBlacklist()
@@ -92,6 +127,7 @@ class MessagesApiTest extends MockeryTestCase
 
                     $this->assertEquals([
                         'to' => '4512345678',
+                        'countryHint' => 'DK',
                         'text' => 'Hello World!',
                         'from' => 'INMBL',
                         'messageId' => 'system-5152',
@@ -233,6 +269,7 @@ class MessagesApiTest extends MockeryTestCase
         $message = Message::create('Hello World!')
             ->from('INMBL')
             ->to(4512345678)
+            ->setCountryHint('DK')
             ->sendAt($sendAt);
 
         $api->shouldReceive('get')

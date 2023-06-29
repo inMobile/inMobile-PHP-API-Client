@@ -3,9 +3,12 @@
 namespace Inmobile\InmobileSDK;
 
 use Inmobile\InmobileSDK\Endpoints\BlacklistApi;
+use Inmobile\InmobileSDK\Endpoints\GDPRApi;
 use Inmobile\InmobileSDK\Endpoints\ListsApi;
 use Inmobile\InmobileSDK\Endpoints\MessagesApi;
 use Inmobile\InmobileSDK\Endpoints\RecipientsApi;
+use Inmobile\InmobileSDK\Endpoints\TemplatesApi;
+use Inmobile\InmobileSDK\Endpoints\ToolsApi;
 use Inmobile\InmobileSDK\Exceptions\InmobileRequestFailedException;
 
 class InmobileApi
@@ -35,6 +38,21 @@ class InmobileApi
     public function recipients(): RecipientsApi
     {
         return new RecipientsApi($this);
+    }
+
+    public function gdpr(): GDPRApi
+    {
+        return new GDPRApi($this);
+    }
+
+    public function tools(): ToolsApi
+    {
+        return new ToolsApi($this);
+    }
+
+    public function templates(): TemplatesApi
+    {
+        return new TemplatesApi($this);
     }
 
     public function post($url, ?array $payload = null): Response

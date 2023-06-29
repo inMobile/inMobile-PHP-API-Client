@@ -25,7 +25,6 @@ class MessagesApi
         if (!is_array($messages)) {
             $messages = [$messages];
         }
-
         $messagesPayload = [];
 
         // Loop through and build the message payload.
@@ -39,6 +38,27 @@ class MessagesApi
         }
 
         return $this->api->post('/sms/outgoing', ['messages' => $messagesPayload]);
+    }
+
+    public function sendUsingTemplate($messages, string $templateId): Response
+    {
+        if (!is_array($messages)) {
+            $messages = [$messages];
+        }
+
+        $messagesPayload = [];
+
+        // Loop through and build the message payload.
+        // This will handle any messages that is to be sent to multiple recipients.
+        foreach ($messages as $message) {
+            $recipients = (array) $message->getRecipient();
+
+            foreach ($recipients as $recipient) {
+                $messagesPayload[] = $message->to($recipient)->toArray();
+            }
+        }
+
+        return $this->api->post('/sms/outgoing/sendusingtemplate', ['templateId' => $templateId, 'messages' => $messagesPayload]);
     }
 
     public function getStatusReport(int $limit = 20): Response

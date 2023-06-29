@@ -87,7 +87,7 @@ class Recipient
 
     public function setCountryCode(string $countryCode): Recipient
     {
-        $this->countryCode = $countryCode; 
+        $this->countryCode = $countryCode;
 
         return $this;
     }
@@ -102,8 +102,8 @@ class Recipient
 
     public function setPhoneNumber(string $phoneNumber): Recipient
     {
-        $this->phoneNumber = $phoneNumber; 
-        
+        $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
 
