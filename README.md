@@ -291,6 +291,20 @@ $api->recipients()->update(
 )
 ```
 
+#### Update or create
+Update or create a recipient on a list if it doesn't exist.
+
+```php
+$api->recipients()->updateOrCreate(
+    $listId = 'LIST-1',
+    45,         
+    12345678,   
+    Recipient::create(45, 12345679)
+        ->addField('firstname', 'Johny')
+        ->addField('lastname', 'Doe')     
+)
+```
+
 #### Delete by ID
 Delete a recipient by ID
 
