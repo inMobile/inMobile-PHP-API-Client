@@ -35,8 +35,8 @@ class RecipientsApi
     public function findByPhoneNumber(string $listId, $countryCode, $phoneNumber): Recipient
     {
         $response = $this->api->get('/lists/' . $listId . '/recipients/ByNumber', [
-            'countryCode' => (string) $countryCode,
-            'phoneNumber' => (string) $phoneNumber,
+            'countryCode' => (string)$countryCode,
+            'phoneNumber' => (string)$phoneNumber,
         ]);
 
         return $this->convertToRecipient($response->toObject());
@@ -54,13 +54,37 @@ class RecipientsApi
         return $this->api->put('/lists/' . $listId . '/recipients/' . $id, $recipient->toArray());
     }
 
+    /**
+     * @param string $listId
+     * @param string$countryCode
+     * @param $phoneNumber
+     * @param Recipient $recipient
+     * @return Recipient
+     */
+    public function updateOrCreate(
+        string    $listId,
+                  $countryCode,
+                  $phoneNumber,
+        Recipient $recipient
+    ): Recipient
+    {
+        $qry = http_build_query([
+            'countryCode' => (string)$countryCode,
+            'phoneNumber' => (string)$phoneNumber
+        ]);
+
+        $response = $this->api->post('/lists/' . $listId . '/recipients/byNumber?' . $qry, $recipient->toArray());
+
+        return $this->convertToRecipient($response->toObject());
+    }
+
     public function deleteById(string $listId, string $id): Response
     {
         return $this->api->delete('/lists/' . $listId . '/recipients/' . $id);
     }
 
     /**
-     * @param string     $listId
+     * @param string $listId
      * @param string|int $countryCode
      * @param string|int $phoneNumber
      *
@@ -69,8 +93,8 @@ class RecipientsApi
     public function deleteByPhoneNumber(string $listId, $countryCode, $phoneNumber): Response
     {
         return $this->api->delete('/lists/' . $listId . '/recipients/ByNumber', [
-            'countryCode' => (string) $countryCode,
-            'phoneNumber' => (string) $phoneNumber,
+            'countryCode' => (string)$countryCode,
+            'phoneNumber' => (string)$phoneNumber,
         ]);
     }
 
@@ -83,7 +107,7 @@ class RecipientsApi
     {
         $recipient = Recipient::create($response->numberInfo->countryCode, $response->numberInfo->phoneNumber)
             ->createdAt(new DateTime($response->created))
-            ->setFields((array) $response->fields)
+            ->setFields((array)$response->fields)
             ->setId($response->id)
             ->setListId($response->listId);
 
