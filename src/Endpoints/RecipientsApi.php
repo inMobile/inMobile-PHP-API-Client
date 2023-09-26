@@ -55,10 +55,12 @@ class RecipientsApi
     }
 
     /**
+     * Update or create recipient.
+     *
      * @param string $listId
-     * @param string$countryCode
-     * @param $phoneNumber
-     * @param Recipient $recipient
+     * @param string|int $countryCode   Phone country code of the recipient to search.
+     * @param string|int $phoneNumber   Phone number of the recipient to search.
+     * @param Recipient $recipient      Recipient data to update or create.
      * @return Recipient
      */
     public function updateOrCreate(
