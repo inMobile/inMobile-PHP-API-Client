@@ -291,16 +291,16 @@ $api->recipients()->update(
 )
 ```
 
-#### Update or create
-Update or create a recipient on a list if it doesn't exist.
+#### Create or update
+Create or update a recipient on a list if it doesn't exist.
 
 ```php
-$api->recipients()->updateOrCreate(
+$api->recipients()->createOrUpdateByPhoneNumber(
     $listId = 'LIST-1',
-    45,         
-    12345678,   
+    $countryCode = 45,
+    $phoneNumber = 12345678,
     Recipient::create(45, 12345679)
-        ->addField('firstname', 'Johny')
+        ->addField('firstname', 'John')
         ->addField('lastname', 'Doe')     
 )
 ```

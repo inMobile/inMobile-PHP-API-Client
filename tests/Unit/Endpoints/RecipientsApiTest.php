@@ -190,6 +190,27 @@ class RecipientsApiTest extends MockeryTestCase
         $this->assertInstanceOf(Response::class, $response);
     }
 
+    public function test_create_or_update_by_phoneNumber_recipient()
+    {
+        $api = Mockery::mock(InmobileApi::class);
+        $recipientsApi = new RecipientsApi($api);
+        $recipient = Recipient::create(45, 12345678)
+            ->addField('firstname', 'John')
+            ->addField('lastname', 'Doe');
+
+        $api->shouldReceive('post')
+            ->with(
+                '/lists/foobar/recipients',
+                $recipient->toArray(),
+            )
+            ->andReturn(new Response($this->validRecipientResponse(), 200))
+            ->once();
+
+        $response = $recipientsApi->createOrUpdateByPhoneNumber('foobar', '45', '12345678', $recipient);
+
+        $this->assertInstanceOf(Recipient::class, $response);
+    }
+
     public function test_delete_recipient()
     {
         $api = Mockery::mock(InmobileApi::class);

@@ -55,20 +55,16 @@ class RecipientsApi
     }
 
     /**
-     * Update or create recipient.
+     * Create or update recipient.
      *
-     * @param string $listId
+     * @param string     $listId
      * @param string|int $countryCode   Phone country code of the recipient to search.
      * @param string|int $phoneNumber   Phone number of the recipient to search.
-     * @param Recipient $recipient      Recipient data to update or create.
+     * @param Recipient  $recipient      Recipient data to update or create.
+     * 
      * @return Recipient
      */
-    public function updateOrCreate(
-        string    $listId,
-                  $countryCode,
-                  $phoneNumber,
-        Recipient $recipient
-    ): Recipient
+    public function createOrUpdateByPhoneNumber(string $listId, $countryCode, $phoneNumber, Recipient $recipient): Recipient
     {
         $qry = http_build_query([
             'countryCode' => (string)$countryCode,
@@ -86,7 +82,7 @@ class RecipientsApi
     }
 
     /**
-     * @param string $listId
+     * @param string     $listId
      * @param string|int $countryCode
      * @param string|int $phoneNumber
      *
