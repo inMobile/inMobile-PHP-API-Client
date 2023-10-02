@@ -200,7 +200,7 @@ class RecipientsApiTest extends MockeryTestCase
 
         $api->shouldReceive('post')
             ->with(
-                '/lists/foobar/recipients?countryCode=45&phoneNumber=12345678',
+                '/lists/foobar/recipients/byNumber?countryCode=45&phoneNumber=12345678',
                 $recipient->toArray(),
             )
             ->andReturn(new Response($this->validRecipientResponse(), 200))
