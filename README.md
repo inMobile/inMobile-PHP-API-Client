@@ -130,17 +130,17 @@ $api->messages()->sendUsingQuery(
 Get all SMS reports
 
 ```php
-$api->messages()->getStatusReport($limit = 20)
+$api->messages()->getStatusReport($limit = 20);
 ```
 
 #### Cancel messages
 Cancel one or multiple messages by their ID
 
 ```php
-$api->messages()->cancel('MESSAGEID-1')
+$api->messages()->cancel('MESSAGEID-1');
 
 // Or multiple messages
-$api->messages()->cancel(['MESSAGEID-1', 'MESSAGEID-2'])
+$api->messages()->cancel(['MESSAGEID-1', 'MESSAGEID-2']);
 ```
 
 ### Lists
@@ -150,35 +150,35 @@ This can be accessed by calling `->lists()` on `InmobileApi`. Below you will fin
 Fetch all lists. This automatically runs through every page and returns an array of all lists.
 
 ```php
-$api->lists()->getAll()
+$api->lists()->getAll();
 ```
 
 #### Find
 Find a list by its ID
 
 ```php
-$api->lists()->find($listId)
+$api->lists()->find($listId);
 ```
 
 #### Create
 Create a new list
 
 ```php
-$api->lists()->create($listName)
+$api->lists()->create($listName);
 ```
 
 #### Update
 Update a list with a new name
 
 ```php
-$api->lists()->update($listId, $newName)
+$api->lists()->update($listId, $newName);
 ```
 
 #### Delete
 Delete a list by its ID
 
 ```php
-$api->lists()->delete($listId)
+$api->lists()->delete($listId);
 ```
 
 ### Blacklist
@@ -188,49 +188,49 @@ This can be accessed by calling `->blacklist()` on `InmobileApi`. Below you will
 Fetch a paginated list of all entries in your blacklist
 
 ```php
-$api->blacklist()->get($pageLimit = 20)
+$api->blacklist()->get($pageLimit = 20);
 ```
 
 #### Get all
 Fetch all entries in a blacklist. This automatically runs through every page and returns an array of all entries.
 
 ```php
-$api->blacklist()->getAll()
+$api->blacklist()->getAll();
 ```
 
 #### Find by ID
 Find an entry by ID
 
 ```php
-$api->blacklist()->findEntryById('ENTRYID-1')
+$api->blacklist()->findEntryById('ENTRYID-1');
 ```
 
 #### Find by phone number
 Find an entry by phone number
 
 ```php
-$api->blacklist()->findEntryByNumber($countryCode = 45, $phoneNumber = 12345678)
+$api->blacklist()->findEntryByNumber($countryCode = 45, $phoneNumber = 12345678);
 ```
 
 #### Create
 Create a new entry in the blacklist
 
 ```php
-$api->blacklist()->createEntry($countryCode = 45, $phoneNumber = 12345678, $comment = null)
+$api->blacklist()->createEntry($countryCode = 45, $phoneNumber = 12345678, $comment = null);
 ```
 
 #### Delete by ID
 Delete an entry by ID
 
 ```php
-$api->blacklist()->deleteEntryById('ENTRYID-1')
+$api->blacklist()->deleteEntryById('ENTRYID-1');
 ```
 
 #### Delete by phone number
 Delete an entry by phone number
 
 ```php
-$api->blacklist()->deleteEntryByNumber($countryCode = 45, $phoneNumber = 12345678)
+$api->blacklist()->deleteEntryByNumber($countryCode = 45, $phoneNumber = 12345678);
 ```
 
 ### Recipients
@@ -240,28 +240,28 @@ This can be accessed by calling `->recipients()` on `InmobileApi`. Below you wil
 Get a paginated response of all recipients in a list
 
 ```php
-$api->recipients()->get($listId = 'LIST-1', $limit = 20)
+$api->recipients()->get($listId = 'LIST-1', $limit = 20);
 ```
 
 #### Get all
 Fetch all recipients on a list. This automatically runs through every page and returns an array of all recipients.
 
 ```php
-$api->recipients()->getAll($listId = 'LIST-1')
+$api->recipients()->getAll($listId = 'LIST-1');
 ```
 
 #### Find by ID
 Find a recipient by ID
 
 ```php
-$api->recipients()->findById($listId = 'LIST-1', $id = 'RECIPIENT-1')
+$api->recipients()->findById($listId = 'LIST-1', $id = 'RECIPIENT-1');
 ```
 
 #### Find by phone number
 Find a recipient by phone number
 
 ```php
-$api->recipients()->findByPhoneNumber($listId = 'LIST-1', $countryCode = 45, $phoneNumber = 12345678)
+$api->recipients()->findByPhoneNumber($listId = 'LIST-1', $countryCode = 45, $phoneNumber = 12345678);
 ```
 
 #### Create
@@ -274,7 +274,7 @@ $api->recipients()->create(
         ->addField('firstname', 'John')
         ->addField('lastname', 'Doe')
         ->createdAt(new DateTime('2021-01-02 03:04:05'))
-)
+);
 ```
 
 #### Update
@@ -288,28 +288,42 @@ $api->recipients()->update(
         ->addField('firstname', 'John')
         ->addField('lastname', 'Doe')
         ->createdAt(new DateTime('2021-01-02 03:04:05'))
-)
+);
+```
+
+#### Create or update
+Create or update a recipient on a list if it doesn't exist.
+
+```php
+$api->recipients()->createOrUpdateByPhoneNumber(
+    $listId = 'LIST-1',
+    $countryCode = 45,
+    $phoneNumber = 12345678,
+    Recipient::create(45, 12345678)
+        ->addField('firstname', 'John')
+        ->addField('lastname', 'Doe')     
+);
 ```
 
 #### Delete by ID
 Delete a recipient by ID
 
 ```php
-$api->recipients()->deleteById($listId = 'LIST-1', $id = 'RECIPIENT-1')
+$api->recipients()->deleteById($listId = 'LIST-1', $id = 'RECIPIENT-1');
 ```
 
 #### Delete by phone number
 Delete a recipient by phone number
 
 ```php
-$api->recipients()->deleteByPhoneNumber($listId = 'LIST-1', $countryCode = 45, $phoneNumber = 12345678)
+$api->recipients()->deleteByPhoneNumber($listId = 'LIST-1', $countryCode = 45, $phoneNumber = 12345678);
 ```
 
 #### Delete all recipients on a list
 This deletes all recipients on the given list
 
 ```php
-$api->recipients()->deleteAllFromList($listId = 'LIST-1')
+$api->recipients()->deleteAllFromList($listId = 'LIST-1');
 ```
 
 ### GDPR
@@ -317,7 +331,7 @@ $api->recipients()->deleteAllFromList($listId = 'LIST-1')
 #### Create information deletion request
 
 ```php
-$api->gdpr()->createDeletionRequest(NumberInfo::create($countryCode = '45', $phoneNumber = '12345678'))
+$api->gdpr()->createDeletionRequest(NumberInfo::create($countryCode = '45', $phoneNumber = '12345678'));
 ```
 
 ### Tools
@@ -328,10 +342,10 @@ $api->gdpr()->createDeletionRequest(NumberInfo::create($countryCode = '45', $pho
 $api->tools()->numbersToParse([
     NumberToParse::create($countryHint = 'DK', $rawMsisdn = '12 34 56 78')
     NumberToParse::create($countryHint = '45', $rawMsisdn = '12 34 56 78')
-])
+]);
 
 // If you wish to parse a single number, you can do so by passing a single NumberToParse object
-$api->tools()->numbersToParse(NumberToParse::create($countryHint = 'DK', $rawMsisdn = '12 34 56 78'))
+$api->tools()->numbersToParse(NumberToParse::create($countryHint = 'DK', $rawMsisdn = '12 34 56 78'));
 ```
 
 ### Templates
@@ -340,12 +354,12 @@ $api->tools()->numbersToParse(NumberToParse::create($countryHint = 'DK', $rawMsi
 Fetch all templates. This automatically runs through every page and returns an array of all templates.
 
 ```php
-$api->templates()->getAll()
+$api->templates()->getAll();
 ```
 
 #### Find
 Find a template by its ID
 
 ```php
-$api->templates()->find($templateId)
+$api->templates()->find($templateId);
 ```
