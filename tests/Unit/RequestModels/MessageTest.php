@@ -21,7 +21,8 @@ class MessageTest extends TestCase
             ->flash()
             ->ignoreBlacklist()
             ->setEncoding(Message::ENCODING_GSM7)
-            ->setStatusCallbackUrl('https://example.com/callback');
+            ->setStatusCallbackUrl('https://example.com/callback')
+            ->setMsisdnCooldownInMinutes(60);
 
         $this->assertEquals('Hello World', $message->getText());
         $this->assertEquals(4512345678, $message->getRecipient());
@@ -34,6 +35,7 @@ class MessageTest extends TestCase
         $this->assertFalse($message->getRespectBlacklist());
         $this->assertEquals(Message::ENCODING_GSM7, $message->getEncoding());
         $this->assertEquals('https://example.com/callback', $message->getStatusCallbackUrl());
+        $this->assertEquals(60, $message->getMsisdnCooldownInMinutes());
     }
 
     public function test_convert_to_array()
@@ -49,7 +51,8 @@ class MessageTest extends TestCase
             ->flash()
             ->ignoreBlacklist()
             ->setEncoding(Message::ENCODING_GSM7)
-            ->setStatusCallbackUrl('https://example.com/callback');
+            ->setStatusCallbackUrl('https://example.com/callback')
+            ->setMsisdnCooldownInMinutes(60);
 
         $this->assertEquals([
             'to' => '4512345678',
@@ -63,6 +66,7 @@ class MessageTest extends TestCase
             'respectBlacklist' => false,
             'statusCallbackUrl' => 'https://example.com/callback',
             'encoding' => Message::ENCODING_GSM7,
+            'msisdnCooldownInMinutes' => 60,
         ], $message->toArray());
     }
 }

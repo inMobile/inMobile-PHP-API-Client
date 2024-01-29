@@ -21,6 +21,7 @@ class Message
     protected string $encoding = self::ENCODING_GSM7;
     protected ?string $messageId = null;
     protected ?string $countryHint = null;
+    protected ?int $msisdnCooldownInMinutes = null;
 
     /**
      * @var mixed
@@ -107,6 +108,13 @@ class Message
         return $this;
     }
 
+    public function setMsisdnCooldownInMinutes(?int $msisdnCooldownInMinutes): self
+    {
+        $this->msisdnCooldownInMinutes = $msisdnCooldownInMinutes;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -123,6 +131,7 @@ class Message
             'respectBlacklist' => $this->respectBlacklist,
             'statusCallbackUrl' => $this->statusCallbackUrl,
             'encoding' => $this->encoding,
+            'msisdnCooldownInMinutes' => $this->msisdnCooldownInMinutes,
         ];
     }
 
@@ -179,5 +188,10 @@ class Message
     public function getCountryHint(): ?string
     {
         return $this->countryHint;
+    }
+
+    public function getMsisdnCooldownInMinutes(): ?int
+    {
+        return $this->msisdnCooldownInMinutes;
     }
 }
