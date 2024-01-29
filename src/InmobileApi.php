@@ -3,6 +3,8 @@
 namespace Inmobile\InmobileSDK;
 
 use Inmobile\InmobileSDK\Endpoints\BlacklistApi;
+use Inmobile\InmobileSDK\Endpoints\EmailsApi;
+use Inmobile\InmobileSDK\Endpoints\EmailTemplatesApi;
 use Inmobile\InmobileSDK\Endpoints\GDPRApi;
 use Inmobile\InmobileSDK\Endpoints\ListsApi;
 use Inmobile\InmobileSDK\Endpoints\MessagesApi;
@@ -53,6 +55,16 @@ class InmobileApi
     public function templates(): TemplatesApi
     {
         return new TemplatesApi($this);
+    }
+
+    public function emails(): EmailsApi
+    {
+        return new EmailsApi($this);
+    }
+
+    public function emailTemplates(): EmailTemplatesApi
+    {
+        return new EmailTemplatesApi($this);
     }
 
     public function post($url, ?array $payload = null): Response
