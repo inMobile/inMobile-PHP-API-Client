@@ -1,7 +1,7 @@
 # Inmobile PHP SDK for v4
 
 ## Requirements
-- PHP 7.4, 8.0, 8.1 or 8.2. 
+- PHP 7.4, 8.0, 8.1, 8.2 or 8.3. 
 
 ## Getting started
 The latest version of the client can be found on packagist [here](https://packagist.org/packages/inmobile/inmobile-sdk)
