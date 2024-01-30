@@ -363,3 +363,59 @@ Find a template by its ID
 ```php
 $api->templates()->find($templateId);
 ```
+
+### Emails
+
+#### Send email
+
+Send an email to one or more recipients with the specified subject and text / html body.
+
+```php
+$api->emails()->send(
+    Email::create()
+        ->from(EmailRecipient::create('john@example.com', 'John Doe'))
+        ->to(EmailRecipient::create('jane@example.com', 'Jane Doe'))
+        ->subject('Hello World')
+        ->text('Hello World')
+        ->html('<h1>Hello World</h1>')
+);
+```
+
+#### Send email using template
+
+Send an email to one or more recipients using a template.
+
+```php
+$api->emails()->sendUsingTemplate(
+    Email::create()
+        ->from(EmailRecipient::create('john@example.com', 'John Doe'))
+        ->to(EmailRecipient::create('jane@example.com', 'Jane Doe'))
+        ->templateId('ABCDEF12-3456-7890-ABCD-EF1234567890')
+);
+```
+
+#### Get email events
+
+Get a paginated list of email events.
+
+```php
+$api->emails()->getEvents($limit = 20);
+```
+
+### Email templates
+
+#### Get all
+
+Fetch all email templates. This automatically runs through every page and returns an array of all templates.
+
+```php
+$api->emailTemplates()->getAll();
+```
+
+#### Find
+
+Find an email template by its ID
+
+```php
+$api->emailTemplates()->find($templateId);
+```
