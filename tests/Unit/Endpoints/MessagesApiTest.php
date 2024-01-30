@@ -137,6 +137,7 @@ class MessagesApiTest extends MockeryTestCase
                         'respectBlacklist' => false,
                         'statusCallbackUrl' => 'https://example.com/inmobile/callback',
                         'encoding' => Message::ENCODING_UCS2,
+                        'msisdnCooldownInMinutes' => null,
                     ], $payload['messages'][0]);
 
                     return true;
