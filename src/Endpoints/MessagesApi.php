@@ -91,4 +91,9 @@ class MessagesApi
 
         return $this->api->post('/sms/outgoing/cancel', ['messageIds' => $messageIds]);
     }
+
+    public function getIncoming(int $limit = 20): Response
+    {
+        return $this->api->get('/sms/incoming/messages', ['limit' => $limit]);
+    }
 }

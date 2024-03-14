@@ -295,4 +295,22 @@ class MessagesApiTest extends MockeryTestCase
 
         $this->assertInstanceOf(Response::class, $response);
     }
+
+    public function test_get_incoming_messages()
+    {
+        $api = Mockery::mock(InmobileApi::class);
+        $messagesApi = new MessagesApi($api);
+
+        $api->shouldReceive('get')
+            ->with(
+                '/sms/incoming/messages',
+                ['limit' => 13]
+            )
+            ->andReturn(new Response('[]', 200))
+            ->once();
+
+        $response = $messagesApi->getIncoming(13);
+
+        $this->assertInstanceOf(Response::class, $response);
+    }
 }
