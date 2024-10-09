@@ -1,8 +1,8 @@
 {
     "name": "inmobile/inmobile-sdk",
-    "description": "The official PHP libary for interaction with the InMobile API",
+    "description": "The official PHP library for interaction with the InMobile API",
     "type": "library",
-	"license": "BSD-3-Clause",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "InMobile Aps",
