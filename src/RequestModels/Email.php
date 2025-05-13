@@ -27,6 +27,8 @@ class Email
     protected ?DateTime $sendTime = null;
 
     protected ?bool $tracking = null;
+    
+    protected ?bool $listUnsubscribe = null;
 
     /** @var array<string, string> */
     protected ?array $placeholders = [];
@@ -106,6 +108,13 @@ class Email
         return $this;
     }
 
+    public function listUnsubscribe(bool $listUnsubscribe): self
+    {
+        $this->listUnsubscribe = $listUnsubscribe;
+
+        return $this;
+    }
+
     public function addPlaceholder(string $key, string $value): self
     {
         if ($key[0] !== '{' || $key[strlen($key) - 1] !== '}') {
@@ -179,12 +188,13 @@ class Email
             'messageId' => $this->messageId,
             'sendTime' => $this->sendTime ? $this->sendTime->format('Y-m-d\TH:i:s\Z') : null,
             'tracking' => $this->tracking,
+            'listUnsubscribe' => $this->listUnsubscribe,
             'placeholders' => $this->placeholders,
         ];
 
         // Remove optional fields that are not set
-        foreach (['subject', 'replyTo', 'html', 'text', 'templateId', 'messageId', 'sendTime', 'tracking', 'placeholders'] as $key) {
-            if (empty($array[$key])) {
+        foreach (['subject', 'replyTo', 'html', 'text', 'templateId', 'messageId', 'sendTime', 'tracking', 'listUnsubscribe', 'placeholders'] as $key) {
+            if ($array[$key] === null || (is_array($array[$key]) && empty($array[$key]))) {
                 unset($array[$key]);
             }
         }
