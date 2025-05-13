@@ -22,7 +22,7 @@ class EmailTest extends TestCase
             ->messageId('8fe266b2-56e9-4b5f-938f-cc5e22530721')
             ->sendAt(new DateTime('2021-01-02 03:04:05'))
             ->tracking(true)
-            ->listUnsubscribe(false)
+            ->listUnsubscribe(true)
             ->addPlaceholder('name', 'John Doe');
 
         $this->assertEquals(
@@ -50,7 +50,7 @@ class EmailTest extends TestCase
                 'messageId' => '8fe266b2-56e9-4b5f-938f-cc5e22530721',
                 'sendTime' => '2021-01-02T03:04:05Z',
                 'tracking' => true,
-                'listUnsubscribe' => false,
+                'listUnsubscribe' => true,
                 'placeholders' => [
                     '{name}' => 'John Doe',
                 ],
