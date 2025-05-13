@@ -194,7 +194,7 @@ class Email
 
         // Remove optional fields that are not set
         foreach (['subject', 'replyTo', 'html', 'text', 'templateId', 'messageId', 'sendTime', 'tracking', 'listUnsubscribe', 'placeholders'] as $key) {
-            if ($array[$key] === null) {
+            if ($array[$key] === null || (is_array($array[$key]) && empty($array[$key]))) {
                 unset($array[$key]);
             }
         }
