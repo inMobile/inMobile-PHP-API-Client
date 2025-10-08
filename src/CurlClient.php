@@ -9,7 +9,7 @@ class CurlClient
     protected ?string $baseUri = null;
     protected string $apiKey;
 
-    public function __construct(string $apiKey, string $baseUri = null)
+    public function __construct(string $apiKey, ?string $baseUri = null)
     {
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
