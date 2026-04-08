@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, e.g. 4.1.0.112
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          extensions: curl, json
+          tools: composer:v2, phpunit:v9
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+
+      - name: Update version in CurlClient.php
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          php -r '
+            $file = "src/CurlClient.php";
+            $contents = file_get_contents($file);
+            $updated = preg_replace(
+              "/Inmobile PHP Client v[0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+)?/",
+              "Inmobile PHP Client v" . getenv("VERSION"),
+              $contents,
+              1,
+              $count
+            );
+            if ($count !== 1) {
+              fwrite(STDERR, "Failed to update version string\n");
+              exit(1);
+            }
+            file_put_contents($file, $updated);
+          '
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+
+      - name: Install dependencies
+        run: composer install -n --prefer-dist
+
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-text
+
+      - name: Commit version bump
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add src/CurlClient.php
+
+          if git diff --cached --quiet; then
+            echo "No version change detected"
+            exit 1
+          fi
+
+          git commit -m "Release v$VERSION"
+
+      - name: Create annotated tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+
+      - name: Push commit and tag
+        run: |
+          git push origin HEAD:master
+          git push origin --tags
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --generate-notes \
+            --verify-tag
