@@ -7,6 +7,9 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -16,24 +19,24 @@ jobs:
         php-versions: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v5
 
       - name: Cache composer dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
+          key: composer-${{ runner.os }}-${{ matrix.php-versions }}-${{ hashFiles('composer.lock') }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: none
-          extensions: mysql
+          extensions: curl, json
           tools: composer:v2, phpunit:v9
 
       - name: Run composer install
         run: composer install -n --prefer-dist
 
       - name: PHPUnit Tests
-        run: phpunit --coverage-text
+        run: vendor/bin/phpunit --coverage-text
