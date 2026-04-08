@@ -1,0 +1,108 @@
+name: Release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, e.g. 4.1.0.112
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+          extensions: curl, json
+          tools: composer:v2, phpunit:v9
+
+      - name: Validate version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+
+      - name: Update version in CurlClient.php
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          php -r '
+            $file = "src/CurlClient.php";
+            $contents = file_get_contents($file);
+            $updated = preg_replace(
+              "/Inmobile PHP Client v[0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+)?/",
+              "Inmobile PHP Client v" . getenv("VERSION"),
+              $contents,
+              1,
+              $count
+            );
+            if ($count !== 1) {
+              fwrite(STDERR, "Failed to update version string\n");
+              exit(1);
+            }
+            file_put_contents($file, $updated);
+          '
+
+      - name: Install dependencies
+        run: composer install -n --prefer-dist
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+
+      - name: Create branch and commit
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          BRANCH="release/v$VERSION"
+          git switch -c "$BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/CurlClient.php
+          git diff --cached --quiet && { echo "No changes"; exit 1; }
+          git commit -m "Release v$VERSION"
+          git push origin "$BRANCH"
+
+      - name: Create PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          gh pr create \
+            --base master \
+            --head "release/v$VERSION" \
+            --title "Release v$VERSION" \
+            --body "Automated release PR for v$VERSION"
+
+          PR_NUMBER=$(gh pr view "release/v$VERSION" --json number --jq .number)
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Approve PR with release bot
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_APPROVER_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          gh pr review "$PR_NUMBER" --approve --body "Auto-approving release PR"
+
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_APPROVER_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          gh pr merge "$PR_NUMBER" --auto --squash
