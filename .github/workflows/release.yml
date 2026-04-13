@@ -86,9 +86,9 @@ jobs:
             --exclude=.git \
             --exclude=.github \
             --exclude=vendor/bin/.phpunit \
-            --exclude="$ARCHIVE" \
-            -czf "$ARCHIVE" .
+            -czf "/tmp/$ARCHIVE" .
 
+          mv "/tmp/$ARCHIVE" "$ARCHIVE"
           echo "ARCHIVE=$ARCHIVE" >> "$GITHUB_ENV"
 
       - name: Push tag
