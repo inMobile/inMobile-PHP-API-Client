@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to release, e.g. 4.1.0.112
+        description: Version to release, e.g. 4.1.0
         required: true
         type: string
 
@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -27,37 +27,39 @@ jobs:
           php-version: '8.5'
           coverage: none
           extensions: curl, json
-          tools: composer:v2, phpunit:v9
+          tools: composer:v2
 
       - name: Validate version format
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-            echo "Invalid version: $VERSION"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version: $VERSION (must be semver: MAJOR.MINOR.PATCH)"
             exit 1
           fi
 
-      - name: Update version in CurlClient.php
+      - name: Patch version in CurlClient.php for this build only
+        env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION="${{ github.event.inputs.version }}"
           php -r '
-            $file = "src/CurlClient.php";
-            $contents = file_get_contents($file);
-            $updated = preg_replace(
-              "/Inmobile PHP Client v[0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+)?/",
+          $file = "src/CurlClient.php";
+          $contents = file_get_contents($file);
+
+          $updated = preg_replace(
+              "/Inmobile PHP Client v[0-9]+\\.[0-9]+\\.[0-9]+/",
               "Inmobile PHP Client v" . getenv("VERSION"),
               $contents,
               1,
               $count
-            );
-            if ($count !== 1) {
+          );
+
+          if ($count !== 1) {
               fwrite(STDERR, "Failed to update version string\n");
               exit(1);
-            }
-            file_put_contents($file, $updated);
+          }
+
+          file_put_contents($file, $updated);
           '
-        env:
-          VERSION: ${{ github.event.inputs.version }}
 
       - name: Install dependencies
         run: composer install -n --prefer-dist
@@ -65,37 +67,35 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit --coverage-text
 
-      - name: Commit version bump
-        run: |
-          VERSION="${{ github.event.inputs.version }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add src/CurlClient.php
-
-          if git diff --cached --quiet; then
-            echo "No version change detected"
-            exit 1
-          fi
-
-          git commit -m "Release v$VERSION"
-
       - name: Create annotated tag
         run: |
           VERSION="${{ github.event.inputs.version }}"
           git tag -a "v$VERSION" -m "Release v$VERSION"
 
-      - name: Push commit and tag
+      - name: Build release archive from patched workspace
         run: |
-          git push origin HEAD:master
-          git push origin --tags
+          VERSION="${{ github.event.inputs.version }}"
+          ARCHIVE="inMobile-PHP-API-Client-v${VERSION}.tar.gz"
 
-      - name: Create GitHub release
+          tar \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=vendor/bin/.phpunit \
+            -czf "$ARCHIVE" .
+
+          echo "ARCHIVE=$ARCHIVE" >> "$GITHUB_ENV"
+
+      - name: Push tag
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git push origin "v$VERSION"
+
+      - name: Create GitHub release and upload artifact
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          gh release create "v$VERSION" \
+          gh release create "v$VERSION" "$ARCHIVE" \
             --title "v$VERSION" \
             --generate-notes \
             --verify-tag
