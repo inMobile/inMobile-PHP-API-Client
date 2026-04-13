@@ -72,6 +72,12 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit --coverage-text
 
+      - name: Commit version bump
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git add src/CurlClient.php
+          git commit -m "chore: bump version to v$VERSION"
+
       - name: Create annotated tag
         run: |
           VERSION="${{ github.event.inputs.version }}"
