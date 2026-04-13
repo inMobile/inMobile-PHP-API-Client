@@ -33,7 +33,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           coverage: none
           extensions: curl, json
-          tools: composer:v2, phpunit:v9
+          tools: composer:v2
 
       - name: Run composer install
         run: composer install -n --prefer-dist
