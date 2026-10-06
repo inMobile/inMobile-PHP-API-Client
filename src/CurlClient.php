@@ -49,13 +49,17 @@ class CurlClient
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
 
-        if (!$response = curl_exec($curl)) {
+        $response = curl_exec($curl);
+
+        if ($response === false) {
             throw new CurlException(curl_errno($curl), curl_error($curl));
         }
 
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-        curl_close($curl);
+        if (PHP_VERSION_ID < 80000) {
+            curl_close($curl);
+        }
 
         return [$response, $httpStatus];
     }
